@@ -1,0 +1,639 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mohammad Sharifur Rahman - Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .banner {
+            background: url('photo4.jpg') no-repeat center center/cover;
+            height: 300px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            color: #fff;
+        }
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        .banner-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #fff;
+            margin-top: -75px;
+            margin-bottom: 20px;
+        }
+        .nav {
+            background: #fff;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+        .nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+        }
+        .nav a:hover {
+            color: #007bff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .section {
+            margin-bottom: 3rem;
+        }
+        .section h2 {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 1.5rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .card {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card h3 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .card h3 a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .card h3 a:hover {
+            text-decoration: underline;
+        }
+        .card ul {
+            list-style: disc;
+            padding-left: 20px;
+        }
+        .card ul li {
+            margin-bottom: 0.5rem;
+        }
+        .links {
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .links a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: 600;
+        }
+        .links a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .banner {
+                height: 200px;
+            }
+            .profile-img {
+                width: 120px;
+                height: 120px;
+                margin-top: -60px;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <div class="banner-content">
+            <img src="photo3.jpg" alt="Mohammad Sharifur Rahman" class="profile-img">
+            <h1>Mohammad Sharifur Rahman</h1>
+            <p>Telecommunications Expert | AI Researcher | 16+ Years of Experience</p>
+            <div class="links">
+                <a href="https://linkedin.com/in/imsohel" target="_blank">LinkedIn</a>
+            </div>
+        </div>
+    </div>
+    <nav class="nav">
+        <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#education">Education</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#publications">Publications</a></li>
+            <li><a href="#certifications">Certifications</a></li>
+            <li><a href="#awards">Awards</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <div class="section" id="about">
+            <h2>About Me</h2>
+            <p>Dynamic and results-driven technical leader with 16 years of experience in telecommunications, specializing in LTE, 3G, and 2G Radio Access Network (RAN) planning and optimization. Held influential roles at global corporations including Huawei, Telenor, Telekom Malaysia, and VEON, driving operational excellence and network reliability through strategic leadership and innovative solutions. Successfully managed over 20 major projects, leading diverse teams of up to 200 professionals across 15+ countries, consistently meeting ambitious $6M annual sales targets. Currently pursuing a PhD in AI for Smart Semiconductor Manufacturing, with expertise in machine learning, digital twins, and Industry 4.0 applications. Adept at integrating data-driven insights with business analytics to deliver transformative outcomes in telecommunications and emerging technologies.</p>
+        </div>
+        <div class="section" id="experience">
+            <h2>Professional Experience</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3><a href="https://www.ulster.ac.uk/" target="_blank">Ulster University</a> - Doctoral Researcher</h3>
+                    <p>UK | Oct 2023 – Present</p>
+                    <ul>
+                        <li>Conduct cutting-edge research in AI for smart semiconductor manufacturing, focusing on Industry 4.0, digital twins, and cycle time optimization.</li>
+                        <li>Develop machine learning models to enhance operational efficiency in semiconductor production.</li>
+                        <li>Key Skills: Statistical Data Analysis, Computer Vision, AI, Machine Learning, Big Data</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://www.huawei.com/" target="_blank">Huawei</a> - Head of RF Planning and Optimization, Banglalink Account</h3>
+                    <p>Dhaka, Bangladesh | Feb 2018 – Jan 2020</p>
+                    <ul>
+                        <li>Led a high-performing team of RF engineers to design and optimize mobile networks, achieving exceptional performance and customer satisfaction.</li>
+                        <li>Spearheaded Bangladesh's initial 4G deployment and facilitated 2G to 3G migration for Banglalink.</li>
+                        <li>Drove strategic planning, spectrum management, and network performance analysis.</li>
+                        <li>Supported business growth through technical sales and cross-functional collaboration.</li>
+                        <li>Key Skills: Spectrum Management, Strategic Thinking, Technical Architecture, Customer-Focused Selling</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://www.huawei.com/" target="_blank">Huawei</a> - Head of RF Planning and Optimization, Teletalk Account</h3>
+                    <p>Dhaka, Bangladesh | Jan 2016 – Feb 2018</p>
+                    <ul>
+                        <li>Enhanced RF consulting services for Teletalk, Bangladesh's government-owned operator.</li>
+                        <li>Led the planning and deployment of Bangladesh's first 4G sites and managed nationwide projects.</li>
+                        <li>Lectured at Huawei Virtual University, fostering local engineering talent.</li>
+                        <li>Key Skills: New Business Development, Technical Sales, Pre-Sales Technical Consulting</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://www.huawei.com/" target="_blank">Huawei</a> - RF Expert, True Move</h3>
+                    <p>Bangkok, Thailand | Oct 2015 – Jan 2016</p>
+                    <ul>
+                        <li>Played a pivotal role in the nationwide rollout of True Move's first 4G network.</li>
+                        <li>Conducted site surveys, frequency planning, and interference analysis.</li>
+                        <li>Key Skills: Spectrum Management, Technical Presentations, Business Understanding</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://www.huawei.com/" target="_blank">Huawei</a> - Network Performance Director, Robi Axiata Ltd.</h3>
+                    <p>Dhaka, Bangladesh | Jun 2015 – Oct 2015</p>
+                    <ul>
+                        <li>Led the modernization of Robi's mobile network, improving performance, coverage, and latency.</li>
+                        <li>Spearheaded the "Lighthouse" project, setting global KPI standards.</li>
+                        <li>Key Skills: Sales Operations, Strategic Thinking, Technical Consulting</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://www.huawei.com/" target="_blank">Huawei</a> - RNO Team Lead, Grameenphone, Banglalink & Airtel Accounts</h3>
+                    <p>Global | Jan 2014 – Jun 2015</p>
+                    <ul>
+                        <li>Led RF planning and optimization for multiple operator accounts.</li>
+                        <li>Contributed to business case analyses and achieved company targets.</li>
+                        <li>Key Skills: Business Understanding, Relationship Building, Negotiation</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://www.banglalink.net/" target="_blank">Banglalink</a> - Optimization Senior Engineer</h3>
+                    <p>Dhaka, Bangladesh | Sep 2006 – Jan 2014</p>
+                    <ul>
+                        <li>Conducted parameter audits and optimization for BSS networks.</li>
+                        <li>Developed tools for network fault identification.</li>
+                        <li>Key Skills: Voice of the Customer, Radio, Presentations</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://www.grameenphone.com/" target="_blank">Grameenphone Ltd</a> - Customer Manager (Contract)</h3>
+                    <p>Dhaka, Bangladesh | Jan 2006 – Aug 2006</p>
+                    <ul>
+                        <li>Developed automation tools to reduce customer database errors.</li>
+                        <li>Enhanced operational efficiency through innovative software solutions.</li>
+                        <li>Key Skills: Customer Service Management, Client Services Management</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://robi.com.bd/" target="_blank">Robi Axiata Limited</a> - Intern</h3>
+                    <p>Dhaka, Bangladesh | Oct 2005 – Dec 2005</p>
+                    <ul>
+                        <li>Designed training management solutions, improving employee training efficiency.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://www.adb.org/" target="_blank">Asian Development Bank (ADB)</a> - Executive (Part-time)</h3>
+                    <p>Dhaka, Bangladesh | Jan 2004 – Aug 2005</p>
+                    <ul>
+                        <li>Supervised a nationwide survey project, securing substantial development financing.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="section" id="education">
+            <h2>Education</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3><a href="https://www.ulster.ac.uk/" target="_blank">Ulster University</a> - Doctor of Philosophy (PhD), AI in Smart Semiconductor Manufacturing</h3>
+                    <p>UK | Oct 2023 – Sep 2026 (Expected)</p>
+                    <ul>
+                        <li>Focus: Artificial Intelligence, Industry 4.0, Digital Twins, Semiconductor Manufacturing</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://www.ulster.ac.uk/" target="_blank">Ulster University</a> - Master in Data Science, Computing, Engineering, and Intelligent Systems</h3>
+                    <p>UK | Jan 2022 – Jun 2023</p>
+                    <ul>
+                        <li>Grade: Distinction</li>
+                        <li>Award: Allstate Award for Machine Learning Contribution</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://www.du.ac.bd/" target="_blank">University of Dhaka</a> - Master of Business Administration (MBA), Banking & Finance</h3>
+                    <p>Bangladesh | 2007 – 2008</p>
+                    <ul>
+                        <li>Grade: First Division</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://www.aiub.edu/" target="_blank">American International University-Bangladesh</a> - MSc in Computer Science, Intelligent Systems</h3>
+                    <p>Bangladesh | 2012 – 2013</p>
+                    <ul>
+                        <li>Grade: 3.98/4.0</li>
+                        <li>Award: Vice Chancellor's Gold Medal for Academic Excellence and Most Innovative Project</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://www.aiub.edu/" target="_blank">American International University-Bangladesh</a> - Bachelor's Degree, Computer Engineering</h3>
+                    <p>Bangladesh | 2001 – 2004</p>
+                    <ul>
+                        <li>Grade: 3.67/4.0</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="section" id="projects">
+            <h2>Key Projects</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>True Move LTE and 3G Second Carrier Rollout</h3>
+                    <p>Thailand, 2015</p>
+                    <ul>
+                        <li>Led LTE and 3G rollout for True Move as a Huawei expert.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Robi Axiata Ltd. 3G & 2G Swap and Modernization</h3>
+                    <p>Bangladesh, 2015</p>
+                    <ul>
+                        <li>Headed RF operations for Huawei's Robi Axiata account.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Multi Radio Trial Project</h3>
+                    <p>Banglalink, 2012</p>
+                    <ul>
+                        <li>Conducted trials for Orascom Telecom Bangladesh Limited.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>NSN Swap Project</h3>
+                    <p>Banglalink, 2011</p>
+                    <ul>
+                        <li>Facilitated network swap for Nokia Siemens Networks (NSN) infrastructure.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Voice Quality Improvement</h3>
+                    <p>Banglalink, 2011</p>
+                    <ul>
+                        <li>Enhanced voice quality across the network through optimization techniques.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>POS Service Implementation</h3>
+                    <p>Banglalink, 2010</p>
+                    <ul>
+                        <li>Implemented Point of Sale (POS) services to improve customer transactions.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Ericsson Swap Project</h3>
+                    <p>Banglalink, 2009</p>
+                    <ul>
+                        <li>Managed the transition from existing to Ericsson network infrastructure.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Co-BCCH Implementation</h3>
+                    <p>Banglalink, 2008</p>
+                    <ul>
+                        <li>Served as project leader for Orascom Telecom Bangladesh Limited, implementing Co-BCCH for network efficiency.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Siemens Swap Project</h3>
+                    <p>Banglalink, 2008</p>
+                    <ul>
+                        <li>Overseen the swap to Siemens network equipment for enhanced performance.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>BSS Upgradation Project</h3>
+                    <p>Banglalink, 2008</p>
+                    <ul>
+                        <li>Upgraded Base Station Subsystem (BSS) to improve network capacity.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>EDGE Implementation</h3>
+                    <p>Banglalink, 2006</p>
+                    <ul>
+                        <li>Deployed EDGE technology to enhance data services.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>SmartCare Delivery Project</h3>
+                    <p>Grameenphone Ltd., 2015</p>
+                    <ul>
+                        <li>Delivered SmartCare solutions to improve customer service operations.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Orascom Telecom 3G Implementation</h3>
+                    <p>2014 – 2015</p>
+                    <ul>
+                        <li>Led the 3G network rollout for Orascom Telecom.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Bharti Airtel MS Project</h3>
+                    <p>2014</p>
+                    <ul>
+                        <li>Managed multi-service project for Bharti Airtel network enhancement.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Orascom Telecom 2G Swap Project</h3>
+                    <p>2014</p>
+                    <ul>
+                        <li>Executed 2G network swap for improved coverage and capacity.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>OSC Feature Implementation</h3>
+                    <p>2012</p>
+                    <ul>
+                        <li>Implemented Quad call rate feature in Vimpelcom Bangladesh network.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Gs Interface Implementation</h3>
+                    <p>2009</p>
+                    <ul>
+                        <li>Implemented BSC-SGSN interface for paging coordination in Orascom Bangladesh network.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="section" id="publications">
+            <h2>Publications</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3><a href="https://ieeexplore.ieee.org/document/123456" target="_blank">Machine Learning with Heuristic Search-Based Hybrid Framework</a></h3>
+                    <p>IEEE Xplore, May 2025</p>
+                    <ul>
+                        <li>Developed a hybrid methodology using random forest and Genetic Algorithm.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://airccj.org/CSCP/vol12/csit121502.pdf" target="_blank">Evaluating the Performance of Common Machine Learning Classifiers</a></h3>
+                    <p>AIRCC, Dec 2022</p>
+                    <ul>
+                        <li>Examined classifiers to optimize accuracy with limited datasets.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://airccj.org/CSCP/vol12/csit121501.pdf" target="_blank">A Comprehensive Study on Machine Learning Methods</a></h3>
+                    <p>AIRCC, Nov 2022</p>
+                    <ul>
+                        <li>Achieved 94% accuracy in Alzheimer's diagnosis using four indicators.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://aircconline.com/aihc2022/papers/vol2/AIHC202201.pdf" target="_blank">Devise the Most Efficient Machine Learning Method</a></h3>
+                    <p>AIHC2022, Nov 2022</p>
+                    <ul>
+                        <li>Assessed machine learning approaches for efficient Alzheimer's diagnosis.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://link.springer.com/chapter/10.1007/978-3-319-11673-1_12" target="_blank">Adaptive Instantaneous Traffic Signal Management</a></h3>
+                    <p>Springer, Nov 2014</p>
+                    <ul>
+                        <li>Proposed a real-time traffic signal control system.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><a href="https://ieeexplore.ieee.org/document/6528328" target="_blank">Counting Objects in an Image by Marker Controlled Watershed</a></h3>
+                    <p>IEEE IACC, Feb 2013</p>
+                    <ul>
+                        <li>Combined watershed segmentation and thresholding for accurate object counting.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="section" id="certifications">
+            <h2>Certifications</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Associate Fellow (AFHEA)</h3>
+                    <p>Advance HE, Jun 2025</p>
+                </div>
+                <div class="card">
+                    <h3>Digital Twins: Enhancing Model-Based Design with AR, VR, and MR</h3>
+                    <p>University of Oxford, Jun 2024</p>
+                </div>
+                <div class="card">
+                    <h3>Business Analytics with Excel</h3>
+                    <p>SkillUp, Jul 2021</p>
+                </div>
+                <div class="card">
+                    <h3>High Impact Leadership for Superior Performance</h3>
+                    <p>Success Works, Jun 2012</p>
+                </div>
+                <div class="card">
+                    <h3>Swissqual Basic Post Processing - NQDI</h3>
+                    <p>Rohde & Schwarz, Feb 2012</p>
+                </div>
+                <div class="card">
+                    <h3>UTRAN Radio Network Planning</h3>
+                    <p>Telefocal Asia, Aug 2010</p>
+                </div>
+                <div class="card">
+                    <h3>Decision Making and Problem Solving</h3>
+                    <p>Aspectum, Jul 2010</p>
+                </div>
+                <div class="card">
+                    <h3>Team Building Specialty Certification</h3>
+                    <p>Lean Sensei International, Jun 2010</p>
+                </div>
+                <div class="card">
+                    <h3>BSS Parameter Planning 2</h3>
+                    <p>Nokia, May 2010</p>
+                </div>
+                <div class="card">
+                    <h3>Planning & Organizing Workshop</h3>
+                    <p>Holistic Training, May 2010</p>
+                </div>
+                <div class="card">
+                    <h3>UMTS Fundamentals</h3>
+                    <p>Telefocal Asia, Apr 2010</p>
+                </div>
+                <div class="card">
+                    <h3>Effective Communication</h3>
+                    <p>Holistic Training, Feb 2010</p>
+                </div>
+                <div class="card">
+                    <h3>SBS BR 10.0 System Overview</h3>
+                    <p>Nokia, Jun 2009</p>
+                </div>
+                <div class="card">
+                    <h3>E-GPRS BR 10.0 Radio Network Parameters</h3>
+                    <p>Nokia, May 2009</p>
+                </div>
+                <div class="card">
+                    <h3>SBS BR 10.0 Radio Network Parameters for GSM</h3>
+                    <p>Nokia, May 2009</p>
+                </div>
+                <div class="card">
+                    <h3>Decision Making & Problem Solving</h3>
+                    <p>NIS Sparta, Aug 2008</p>
+                </div>
+                <div class="card">
+                    <h3>T&A GSM for Administrators</h3>
+                    <p>Astellia, Jul 2008</p>
+                </div>
+                <div class="card">
+                    <h3>SBS BR 10.0 Performance Measurement</h3>
+                    <p>Nokia, Jun 2008</p>
+                </div>
+                <div class="card">
+                    <h3>Solaris System Administration I & II</h3>
+                    <p>Base Limited, Jun 2008</p>
+                </div>
+                <div class="card">
+                    <h3>GSM Radio Network Features</h3>
+                    <p>Ericsson, Mar 2008</p>
+                </div>
+                <div class="card">
+                    <h3>GPRS System Survey</h3>
+                    <p>Ericsson, Nov 2007</p>
+                </div>
+                <div class="card">
+                    <h3>GSM Radio Network Tuning</h3>
+                    <p>Ericsson, Oct 2007</p>
+                </div>
+                <div class="card">
+                    <h3>Metrica Performance Manager</h3>
+                    <p>Microsoft, Jul 2007</p>
+                </div>
+            </div>
+        </div>
+        <div class="section" id="awards">
+            <h2>Awards</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Allstate Award</h3>
+                    <p>Ulster University, Dec 2022</p>
+                </div>
+                <div class="card">
+                    <h3>Huawei Future Star</h3>
+                    <p>Huawei Technologies Ltd., Jan 2016</p>
+                </div>
+                <div class="card">
+                    <h3>Vice Chancellor's Award</h3>
+                    <p>AIUB, Feb 2014</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
