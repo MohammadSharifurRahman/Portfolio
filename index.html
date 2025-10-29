@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -171,6 +132,54 @@
         .links a:hover {
             text-decoration: underline;
         }
+        
+        /* Certificate Thumbnail Styles */
+        .certificate-thumbnail {
+            width: 100%;
+            max-width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .certificate-thumbnail:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Modal for certificate viewing */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90%;
+            margin-top: 2%;
+        }
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #bbb;
+        }
+        
         @media (max-width: 768px) {
             .banner {
                 height: 200px;
@@ -182,6 +191,9 @@
             }
             .grid {
                 grid-template-columns: 1fr;
+            }
+            .certificate-thumbnail {
+                max-width: 100%;
             }
         }
     </style>
@@ -526,94 +538,112 @@
                 <div class="card">
                     <h3>Associate Fellow (AFHEA)</h3>
                     <p>Advance HE, Jun 2025</p>
+                    <img src="AFHEA.jpg" alt="Associate Fellow Certificate" class="certificate-thumbnail" onclick="openModal('AFHEA.jpg')">
                 </div>
                 <div class="card">
                     <h3>Digital Twins: Enhancing Model-Based Design with AR, VR, and MR</h3>
                     <p>University of Oxford, Jun 2024</p>
+                    <img src="Digital Twin.jpg" alt="Digital Twins Certificate" class="certificate-thumbnail" onclick="openModal('Digital Twin.jpg')">
                 </div>
                 <div class="card">
                     <h3>Business Analytics with Excel</h3>
                     <p>SkillUp, Jul 2021</p>
+                    <img src="Business analytics with Excel.jpg" alt="Business Analytics Certificate" class="certificate-thumbnail" onclick="openModal('Business analytics with Excel.jpg')">
                 </div>
                 <div class="card">
                     <h3>High Impact Leadership for Superior Performance</h3>
                     <p>Success Works, Jun 2012</p>
+                    <img src="IMG_0059.jpg" alt="High Impact Leadership Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0059.jpg')">
                 </div>
                 <div class="card">
                     <h3>Swissqual Basic Post Processing - NQDI</h3>
                     <p>Rohde & Schwarz, Feb 2012</p>
+                    <img src="IMG_0063.jpg" alt="Swissqual Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0063.jpg')">
                 </div>
                 <div class="card">
                     <h3>UTRAN Radio Network Planning</h3>
                     <p>Telefocal Asia, Aug 2010</p>
+                    <img src="IMG_0064.jpg" alt="UTRAN Radio Network Planning Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0064.jpg')">
                 </div>
                 <div class="card">
                     <h3>Decision Making and Problem Solving</h3>
                     <p>Aspectum, Jul 2010</p>
+                    <img src="IMG_0054.jpg" alt="Decision Making Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0054.jpg')">
                 </div>
                 <div class="card">
                     <h3>Team Building Specialty Certification</h3>
                     <p>Lean Sensei International, Jun 2010</p>
-                </div>
-                <div class="card">
-                    <h3>BSS Parameter Planning 2</h3>
-                    <p>Nokia, May 2010</p>
+                    <img src="IMG_0058.jpg" alt="Team Building Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0058.jpg')">
                 </div>
                 <div class="card">
                     <h3>Planning & Organizing Workshop</h3>
                     <p>Holistic Training, May 2010</p>
+                    <img src="IMG_0060.jpg" alt="Planning & Organizing Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0060.jpg')">
                 </div>
                 <div class="card">
                     <h3>UMTS Fundamentals</h3>
                     <p>Telefocal Asia, Apr 2010</p>
+                    <img src="IMG_0065.jpg" alt="UMTS Fundamentals Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0065.jpg')">
                 </div>
                 <div class="card">
                     <h3>Effective Communication</h3>
                     <p>Holistic Training, Feb 2010</p>
+                    <img src="IMG_0055.jpg" alt="Effective Communication Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0055.jpg')">
                 </div>
                 <div class="card">
-                    <h3>SBS BR 10.0 System Overview</h3>
-                    <p>Nokia, Jun 2009</p>
-                </div>
-                <div class="card">
-                    <h3>E-GPRS BR 10.0 Radio Network Parameters</h3>
-                    <p>Nokia, May 2009</p>
-                </div>
-                <div class="card">
-                    <h3>SBS BR 10.0 Radio Network Parameters for GSM</h3>
-                    <p>Nokia, May 2009</p>
-                </div>
-                <div class="card">
-                    <h3>Decision Making & Problem Solving</h3>
-                    <p>NIS Sparta, Aug 2008</p>
-                </div>
-                <div class="card">
-                    <h3>T&A GSM for Administrators</h3>
-                    <p>Astellia, Jul 2008</p>
+                    <h3>BSS Parameter Planning 2</h3>
+                    <p>Nokia, May 2010</p>
+                    <img src="IMG_0049.jpg" alt="BSS Parameter Planning Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0049.jpg')">
                 </div>
                 <div class="card">
                     <h3>SBS BR 10.0 Performance Measurement</h3>
-                    <p>Nokia, Jun 2008</p>
+                    <p>Nokia, Jun 2009</p>
+                    <img src="IMG_0050.jpg" alt="SBS Performance Measurement Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0050.jpg')">
                 </div>
                 <div class="card">
                     <h3>Solaris System Administration I & II</h3>
                     <p>Base Limited, Jun 2008</p>
+                    <img src="IMG_0062.jpg" alt="Solaris System Administration Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0062.jpg')">
                 </div>
                 <div class="card">
                     <h3>GSM Radio Network Features</h3>
                     <p>Ericsson, Mar 2008</p>
+                    <img src="IMG_0048.jpg" alt="GSM Radio Network Features Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0048.jpg')">
                 </div>
                 <div class="card">
                     <h3>GPRS System Survey</h3>
                     <p>Ericsson, Nov 2007</p>
+                    <img src="IMG_0046.jpg" alt="GPRS System Survey Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0046.jpg')">
                 </div>
                 <div class="card">
                     <h3>GSM Radio Network Tuning</h3>
                     <p>Ericsson, Oct 2007</p>
+                    <img src="IMG_0047.jpg" alt="GSM Radio Network Tuning Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0047.jpg')">
                 </div>
                 <div class="card">
                     <h3>Metrica Performance Manager</h3>
                     <p>Microsoft, Jul 2007</p>
+                    <img src="IMG_0057.jpg" alt="Metrica Performance Manager Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0057.jpg')">
+                </div>
+                <div class="card">
+                    <h3>E-GPRS BR 10.0 Radio Network Parameters</h3>
+                    <p>Nokia, May 2009</p>
+                    <img src="IMG_0053.jpg" alt="E-GPRS Radio Network Parameters Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0053.jpg')">
+                </div>
+                <div class="card">
+                    <h3>SBS BR 10.0 Radio Network Parameters for GSM</h3>
+                    <p>Nokia, May 2009</p>
+                    <img src="IMG_0052.jpg" alt="SBS Radio Network Parameters Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0052.jpg')">
+                </div>
+                <div class="card">
+                    <h3>SBS BR 10.0 System Overview</h3>
+                    <p>Nokia, Jun 2009</p>
+                    <img src="IMG_0051.jpg" alt="SBS System Overview Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0051.jpg')">
+                </div>
+                <div class="card">
+                    <h3>T&A GSM for Administrators</h3>
+                    <p>Astellia, Jul 2008</p>
+                    <img src="IMG_0061.jpg" alt="T&A GSM for Administrators Certificate" class="certificate-thumbnail" onclick="openModal('IMG_0061.jpg')">
                 </div>
             </div>
         </div>
@@ -635,5 +665,31 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modal for certificate viewing -->
+    <div id="certificateModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+    
+    <script>
+        // Modal functionality for certificate viewing
+        function openModal(imageSrc) {
+            document.getElementById('modalImage').src = imageSrc;
+            document.getElementById('certificateModal').style.display = "block";
+        }
+        
+        function closeModal() {
+            document.getElementById('certificateModal').style.display = "none";
+        }
+        
+        // Close modal when clicking outside the image
+        window.onclick = function(event) {
+            const modal = document.getElementById('certificateModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
 </body>
 </html>
