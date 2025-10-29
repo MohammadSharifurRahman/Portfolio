@@ -179,7 +179,24 @@
         .close:hover {
             color: #bbb;
         }
-        
+        .linkedin-btn {
+    		font-weight: bold;
+    		font-size: 1.5em;
+    		color: white !important;
+   		background-color: #0A66C2; /* LinkedIn's brand blue */
+    		padding: 10px 20px;
+    		border-radius: 5px;
+    		text-decoration: none;
+    		display: inline-block;
+   		transition: background-color 0.3s;
+	}
+
+	.linkedin-btn:hover {
+    		background-color: #004182; /* Darker blue on hover */
+    		text-decoration: none;
+	}
+
+
         @media (max-width: 768px) {
             .banner {
                 height: 200px;
@@ -205,7 +222,7 @@
             <h1>Mohammad Sharifur Rahman</h1>
             <p>Telecommunications Expert | AI Researcher | 16+ Years of Experience</p>
             <div class="links">
-                <a href="https://linkedin.com/in/imsohel" target="_blank">LinkedIn</a>
+                <a href="https://linkedin.com/in/imsohel" target="_blank" class="linkedin-btn">LinkedIn</a>
             </div>
         </div>
     </div>
